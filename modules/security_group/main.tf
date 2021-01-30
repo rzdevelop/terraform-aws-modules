@@ -6,7 +6,7 @@ resource "aws_security_group" "default" {
   })
 }
 
-resource "aws_security_group_rule" "allow-postgres" {
+resource "aws_security_group_rule" "ingress" {
   type              = "ingress"
   from_port         = var.ingress_from_port
   to_port           = var.ingress_to_port
@@ -15,7 +15,7 @@ resource "aws_security_group_rule" "allow-postgres" {
   cidr_blocks       = var.ingress_cidr_blocks
 }
 
-resource "aws_security_group_rule" "allow-postgres" {
+resource "aws_security_group_rule" "egress" {
   type              = "egress"
   from_port         = var.egress_from_port
   to_port           = var.egress_to_port
