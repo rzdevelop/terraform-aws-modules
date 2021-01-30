@@ -19,3 +19,12 @@ variable "db_username" {
 variable "db_password" {
   description = "DB password"
 }
+
+variable "db_name" {
+  description = "DB name"
+  type = string
+  validation {
+    condition     = can(regex("[a-z][a-z0-9_]{1,60}", var.db_name))
+    error_message = "The db_name should be fixed. "
+  }
+}
