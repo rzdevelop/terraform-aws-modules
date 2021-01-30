@@ -18,7 +18,7 @@ resource "aws_db_instance" "default" {
   skip_final_snapshot       = true
   final_snapshot_identifier = "${var.identifier}-final-snapshot"
 
-  tags = merge(local.tags, {
+  tags = merge(var.tags, {
     Resource = "RDSInstance"
   })
 }

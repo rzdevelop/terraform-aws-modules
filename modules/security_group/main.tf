@@ -1,7 +1,7 @@
 resource "aws_security_group" "default" {
   name        = var.full_name
   description = var.description
-  tags = merge(local.tags, {
+  tags = merge(var.tags, {
     Resource = "SecurityGroup"
   })
 }
