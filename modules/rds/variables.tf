@@ -16,6 +16,10 @@ variable "engine_version" {
   default = "12.4"
 }
 
+variable "name" {
+  description = "DB name"
+}
+
 variable "identifier" {
   description = "DB identifier"
 }
