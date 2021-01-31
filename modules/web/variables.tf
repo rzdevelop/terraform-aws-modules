@@ -11,3 +11,14 @@ variable "role" {
   description = "Application role"
   default     = "web"
 }
+
+variable "aliases" {
+  type        = list(string)
+  description = "List of aliases for cloudfront"
+  default     = []
+}
+
+variable "certificate_arn" {
+  type        = string
+  description = "SSL Certificate ARN"
+}
