@@ -7,7 +7,7 @@ resource "aws_s3_bucket" "default" {
     error_document = "index.html"
   }
 
-  tags = merge(local.tags, {
+  tags = merge(var.tags, {
     Resource = "S3Bucket"
   })
 }
