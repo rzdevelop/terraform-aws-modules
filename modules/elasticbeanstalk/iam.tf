@@ -9,13 +9,13 @@ resource "aws_iam_policy" "default" {
 }
 
 ### EC2 Role
-data "template_file" "ec2_asume_policy" {
-  template = file("${path.module}/policies/ec2_asume_policy.json.tpl")
+data "template_file" "ec2_assume_policy" {
+  template = file("${path.module}/policies/ec2_assume_policy.json.tpl")
 }
 
 resource "aws_iam_role" "ec2" {
   name               = local.ec2_role_name
-  assume_role_policy = data.template_file.ec2_asume_policy.rendered
+  assume_role_policy = data.template_file.ec2_assume_policy.rendered
   tags = merge(var.tags, {
     Resource = "IAMRole"
   })
@@ -58,13 +58,13 @@ resource "aws_iam_policy_attachment" "ec2_attach_5" {
 
 
 ### Service Role
-data "template_file" "elasticbeanstalk_asume_policy" {
-  template = file("${path.module}/policies/elasticbeanstalk_asume_policy.json.tpl")
+data "template_file" "elasticbeanstalk_assume_policy" {
+  template = file("${path.module}/policies/elasticbeanstalk_assume_policy.json.tpl")
 }
 
 resource "aws_iam_role" "service" {
   name               = local.service_role_name
-  assume_role_policy = data.template_file.elasticbeanstalk_asume_policy.rendered
+  assume_role_policy = data.template_file.elasticbeanstalk_assume_policy.rendered
   tags = merge(var.tags, {
     Resource = "IAMRole"
   })
