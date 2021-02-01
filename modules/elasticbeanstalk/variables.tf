@@ -80,7 +80,7 @@ variable "deployment_policy" {
 variable "log_retention_in_days" {
   description = "Log Retention in Days"
   type        = string
-  default     = "10"
+  default     = "7"
 }
 
 variable "delete_on_terminate" {

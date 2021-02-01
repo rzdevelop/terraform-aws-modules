@@ -19,7 +19,7 @@ resource "aws_elastic_beanstalk_environment" "default" {
   solution_stack_name = var.solution_stack_name
 
   tags = merge(var.tags, {
-    Resource = "EBEnvironmenr"
+    Resource = "EBEnvironment"
   })
 
   setting {
