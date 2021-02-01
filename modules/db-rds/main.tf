@@ -23,7 +23,7 @@ module "rds" {
   source     = "../rds"
   sg_id      = module.security_group.id
   identifier = module.tags.full_name
-  name = var.db_name
+  name       = var.db_name
   username   = var.db_username
   password   = var.db_password
   tags = merge(module.tags.default_tags, {
