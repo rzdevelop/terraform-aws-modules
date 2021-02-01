@@ -93,3 +93,15 @@ variable "ssl_arn" {
   description = "SSL Arn"
   type        = string
 }
+
+variable "loadbalancer_type" {
+  description = "Load Balancer type"
+  type        = string
+  default     = "application"
+}
+
+variable "healthcheck_path" {
+  description = "Health Check Path"
+  type        = string
+  default     = "/health"
+}

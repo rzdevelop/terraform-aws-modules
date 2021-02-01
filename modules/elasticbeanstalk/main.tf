@@ -113,45 +113,69 @@ resource "aws_elastic_beanstalk_environment" "default" {
     resource  = ""
   }
 
-  #region elb listener
   setting {
-    namespace = "aws:elb:listener:80"
-    name      = "ListenerProtocol"
-    value     = "HTTP"
+    namespace = "aws:elasticbeanstalk:environment"
+    name      = "LoadBalancerType"
+    value     = var.loadbalancer_type
   }
 
   setting {
-    namespace = "aws:elb:listener:80"
-    name      = "InstancePort"
+    namespace = "aws:elasticbeanstalk:environment:process:default"
+    name      = "HealthCheckPath"
+    value     = var.healthcheck_path
+  }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:environment:process:default"
+    name      = "Port"
     value     = "80"
   }
 
   setting {
-    namespace = "aws:elb:listener:80"
+    namespace = "aws:elasticbeanstalk:environment:process:default"
+    name      = "Protocol"
+    value     = "HTTPS"
+  }
+
+  #region alb listener
+  setting {
+    namespace = "aws:elbv2:listener:default"
+    name      = "Protocol"
+    value     = "HTTP"
+  }
+
+  # setting {
+  #   namespace = "aws:elbv2:listener:default"
+  #   name      = "InstancePort"
+  #   value     = "80"
+  # }
+
+  setting {
+    namespace = "aws:elbv2:listener:default"
     name      = "ListenerEnabled"
     value     = "true"
   }
 
   setting {
-    namespace = "aws:elb:listener:443"
-    name      = "ListenerProtocol"
+    namespace = "aws:elbv2:listener:443"
+    name      = "Protocol"
     value     = "HTTPS"
   }
 
-  setting {
-    namespace = "aws:elb:listener:443"
-    name      = "InstancePort"
-    value     = "80"
-  }
+  # setting {
+  #   namespace = "aws:elbv2:listener:443"
+  #   name      = "InstancePort"
+  #   value     = "80"
+  # }
 
   setting {
-    namespace = "aws:elb:listener:443"
-    name      = "SSLCertificateId"
+    namespace = "aws:elbv2:listener:443"
+    name      = "SSLCertificateArns"
     value     = var.ssl_arn
   }
 
   setting {
-    namespace = "aws:elb:listener:443"
+    namespace = "aws:elbv2:listener:443"
     name      = "ListenerEnabled"
     value     = "true"
   }
