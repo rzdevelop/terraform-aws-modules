@@ -1,5 +1,5 @@
 data "aws_security_group" "other" {
-  count = attach_other_sec_group ? 1 : 0
+  count = var.attach_other_sec_group ? 1 : 0
   name  = var.other_sec_group_name
 }
 
@@ -24,11 +24,11 @@ resource "aws_security_group" "default" {
 }
 
 resource "aws_security_group_rule" "other" {
-  count                    = attach_other_sec_group ? 1 : 0
+  count                    = var.attach_other_sec_group ? 1 : 0
   type                     = "ingress"
   from_port                = 5432
   to_port                  = 5432
   protocol                 = "tcp"
-  security_group_id        = aws_security_group.other[0].id
+  security_group_id        = data.aws_security_group.other[0].id
   source_security_group_id = aws_security_group.default.id
 }
