@@ -134,7 +134,7 @@ resource "aws_elastic_beanstalk_environment" "default" {
   setting {
     namespace = "aws:elasticbeanstalk:environment:process:default"
     name      = "Protocol"
-    value     = "HTTPS"
+    value     = "HTTP"
   }
 
   #region alb listener
