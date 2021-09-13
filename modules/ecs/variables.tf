@@ -21,12 +21,12 @@ variable "task_definition_arn" {
 
 variable "security_groups" {
   description = "Security Groups"
-  type        = array(string)
+  type        = list(string)
 }
 
 variable "subnets" {
   description = "Subnets"
-  type        = array(string)
+  type        = list(string)
 }
 
 # Optional
