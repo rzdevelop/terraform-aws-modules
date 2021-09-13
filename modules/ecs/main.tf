@@ -24,8 +24,8 @@ resource "aws_ecs_service" "ecs_service" {
   }
 
   network_configuration {
-    security_groups  = local.security_groups
-    subnets          = local.subnets
+    security_groups  = var.security_groups
+    subnets          = var.subnets
     assign_public_ip = var.assign_public_ip
   }
 
