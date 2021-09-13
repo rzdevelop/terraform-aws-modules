@@ -91,7 +91,7 @@ data "aws_iam_policy_document" "task_role_policy_document" {
 }
 
 resource "aws_iam_role_policy" "task_role_policy" {
-  name   = "${var.full_name}-task-policy"
+  name   = "${local.full_name}-task-policy"
   role   = aws_iam_role.ecs_task_role.name
   policy = data.aws_iam_policy_document.task_role_policy_document.json
 }
