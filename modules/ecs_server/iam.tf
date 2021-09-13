@@ -92,12 +92,12 @@ data "aws_iam_policy_document" "task_role_policy_document" {
 
 resource "aws_iam_role_policy" "task_role_policy" {
   name   = "${var.full_name}-task-policy"
-  role   = aws_iam_role.task_role.name
+  role   = aws_iam_role.ecs_task_role.name
   policy = data.aws_iam_policy_document.task_role_policy_document.json
 }
 
 resource "aws_iam_role_policy_attachment" "task_role_additional_policy" {
   count      = var.enable_task_role_additional_policy ? 1 : 0
-  role       = aws_iam_role.task_role.name
+  role       = aws_iam_role.ecs_task_role.name
   policy_arn = var.additional_policy_arn
 }
