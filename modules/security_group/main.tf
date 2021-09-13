@@ -1,8 +1,11 @@
 resource "aws_security_group" "default" {
   name        = var.full_name
   description = var.description
+  vpc_id      = length(var.vpc_id) > 0 ? var.vpc_id : null
+
   tags = merge(var.tags, {
-    Resource = "SecurityGroup"
+    Service = "EC2"
+    Feature = "SecurityGroup"
   })
 }
 

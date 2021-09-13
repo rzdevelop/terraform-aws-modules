@@ -12,6 +12,12 @@ variable "description" {
   default = "Security Group Description"
 }
 
+variable "vpc_id" {
+  description = "Optional VPC Id"
+  type        = string
+  default     = ""
+}
+
 variable "ingress_from_port" {
   type = number
 }

@@ -36,7 +36,8 @@ resource "aws_ecs_service" "ecs_service" {
   tags = merge(
     var.tags,
     {
-      "Resource" = "ECSService"
+      "Service" = "ECS"
+      "Feature" = "Service"
     },
   )
 }
