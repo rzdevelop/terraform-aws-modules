@@ -26,6 +26,11 @@ variable "container_definitions" {
   type        = string
 }
 
+variable "subnets" {
+  description = "Subnets"
+  type        = list(string)
+}
+
 # Optional
 variable "region" {
   description = "AWS Cluster Region"
