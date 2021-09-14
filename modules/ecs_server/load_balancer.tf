@@ -1,7 +1,7 @@
 resource "aws_security_group" "alb" {
   count       = var.enable_load_balancer ? 1 : 0
   name        = "${local.full_name}-alb"
-  description = "ALB Security Groupd"
+  description = "ALB Security Group"
   vpc_id      = var.vpc_id
 
   ingress {

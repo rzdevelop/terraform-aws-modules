@@ -134,9 +134,9 @@ variable "enable_load_balancer" {
   default     = false
 }
 
-variable "container_name" {
-  description = "Container name when load balancer is enabled"
-  type        = string
+variable "containers_data" {
+  description = "List of maps of the containers info. [{ name = 'Container name', port = '80', cidr = '[\"0.0.0.0/0\"]' }]"
+  type        = list(map(string))
   default     = ""
 }
 

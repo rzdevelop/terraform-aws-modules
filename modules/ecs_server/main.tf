@@ -26,25 +26,34 @@ module "cloudwatch" {
   })
 }
 
-module "ecs-security-group" {
-  source = "../security_group"
-
-  full_name   = "${local.full_name}-ecs_task"
+resource "aws_security_group" "ecs_task" {
+  count       = var.enable_load_balancer ? 1 : 0
+  name        = "${local.full_name}-alb"
   description = "ECS Task Security Group"
   vpc_id      = var.vpc_id
 
-  ingress_from_port   = var.container_port
-  ingress_to_port     = var.container_port
-  ingress_protocol    = "tcp"
-  ingress_cidr_blocks = ["0.0.0.0/0"]
+  dynamic "ingress" {
+    for_each = var.containers_data
 
-  egress_from_port   = 0
-  egress_to_port     = 0
-  egress_protocol    = "-1"
-  egress_cidr_blocks = ["0.0.0.0/0"]
+    content {
+      protocol         = lookup(ingress.value, "protocol", "tcp")
+      from_port        = ingress.value.port
+      to_port          = ingress.value.port
+      cidr_blocks      = jsondecode(lookup(ingress.value, "cidr", "[\"0.0.0.0/0\"]"))
+      ipv6_cidr_blocks = jsondecode(lookup(ingress.value, "ipv6_cidr", "[\"::/0\"]"))
+    }
+  }
+  egress {
+    protocol         = "-1"
+    from_port        = 0
+    to_port          = 0
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
 
   tags = merge(local.default_tags, {
-    Module     = "SecurityGroup"
+    Service    = "EC2"
+    Feature    = "SecurityGroup"
     ForFeature = "ECSService"
   })
 }
@@ -72,7 +81,7 @@ module "ecs" {
   full_name                          = local.full_name
   cluster_arn                        = local.cluster_arn
   task_definition_arn                = aws_ecs_task_definition.task_definition.arn
-  security_groups                    = [module.ecs-security-group.id]
+  security_groups                    = [aws_security_group.ecs_task.id]
   subnets                            = var.subnets
   assign_public_ip                   = var.assign_public_ip
   launch_type                        = var.launch_type
@@ -80,11 +89,12 @@ module "ecs" {
   desired_count                      = var.desired_count
   deployment_minimum_healthy_percent = var.deployment_minimum_healthy_percent
   deployment_maximum_percent         = var.deployment_maximum_percent
-  enable_load_balancer               = var.enable_load_balancer
-  health_check_grace_period_seconds  = var.health_check_grace_period_seconds
-  target_group_arn                   = var.enable_load_balancer ? aws_alb_target_group.default[0].arn : null
-  container_name                     = var.container_name
-  container_port                     = var.container_port
+
+  enable_load_balancer              = var.enable_load_balancer
+  health_check_grace_period_seconds = var.health_check_grace_period_seconds
+  target_group_arn                  = var.enable_load_balancer ? aws_alb_target_group.default[0].arn : null
+  container_name                    = var.enable_load_balancer ? var.containers_data[0].name : null
+  container_port                    = var.enable_load_balancer ? var.containers_data[0].port : null
 
   tags = merge(local.default_tags, {
     Module = "ECS"
