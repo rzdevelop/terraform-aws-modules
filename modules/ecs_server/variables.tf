@@ -137,7 +137,7 @@ variable "enable_load_balancer" {
 variable "containers_data" {
   description = "List of maps of the containers info. [{ name = 'Container name', port = '80', cidr = '[\"0.0.0.0/0\"]' }]"
   type        = list(map(string))
-  default     = ""
+  default     = []
 }
 
 variable "target_group_arn" {
