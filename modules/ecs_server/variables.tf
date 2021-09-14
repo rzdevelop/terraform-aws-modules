@@ -152,6 +152,12 @@ variable "health_check_grace_period_seconds" {
   default     = 60
 }
 
+variable "alb_cert_arn" {
+  description = "When load balancer is enabled, the HTTPS certificate arn"
+  type        = string
+  default     = ""
+}
+
 variable "launch_type" {
   description = "ECS Service Launch Type"
   type        = string

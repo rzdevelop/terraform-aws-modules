@@ -82,7 +82,7 @@ module "ecs" {
   deployment_maximum_percent         = var.deployment_maximum_percent
   enable_load_balancer               = var.enable_load_balancer
   health_check_grace_period_seconds  = var.health_check_grace_period_seconds
-  target_group_arn                   = var.target_group_arn
+  target_group_arn                   = var.enable_load_balancer ? aws_alb_target_group.default[0].arn : null
   container_name                     = var.container_name
   container_port                     = var.container_port
 
