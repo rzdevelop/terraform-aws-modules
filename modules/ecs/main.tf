@@ -29,9 +29,9 @@ resource "aws_ecs_service" "ecs_service" {
     assign_public_ip = var.assign_public_ip
   }
 
-  lifecycle {
-    ignore_changes = [task_definition, desired_count]
-  }
+  # lifecycle {
+  #   ignore_changes = [task_definition, desired_count]
+  # }
 
   tags = merge(
     var.tags,
