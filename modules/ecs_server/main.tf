@@ -28,7 +28,7 @@ module "cloudwatch" {
 
 resource "aws_security_group" "ecs_task" {
   count       = var.enable_load_balancer ? 1 : 0
-  name        = "${local.full_name}-alb"
+  name        = "${local.full_name}-ecs-task"
   description = "ECS Task Security Group"
   vpc_id      = var.vpc_id
 
