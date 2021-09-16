@@ -18,7 +18,7 @@ output "security_group_id" {
   description = "LB Id"
 }
 
-output "security_group.arn" {
+output "security_group_arn" {
   value       = aws_security_group.lb.arn
   description = "LB Arn"
 }
