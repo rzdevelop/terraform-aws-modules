@@ -53,7 +53,7 @@ resource "aws_lb_target_group" "default" {
     unhealthy_threshold = "2"
   }
 
-  tags = merge(var.default_tags, {
+  tags = merge(var.tags, {
     Service    = "EC2"
     Feature    = "TargetGroup"
     ForFeature = "LoadBalancer"
@@ -62,8 +62,7 @@ resource "aws_lb_target_group" "default" {
 
 # Redirect to https listener
 resource "aws_lb_listener" "http" {
-  count             = var.enable_load_balancer ? 1 : 0
-  load_balancer_arn = aws_lb.default[0].id
+  load_balancer_arn = aws_lb.default.id
   port              = 80
   protocol          = "HTTP"
 
@@ -88,7 +87,7 @@ resource "aws_lb_listener" "https" {
   certificate_arn = var.lb_cert_arn
 
   default_action {
-    target_group_arn = aws_alb_target_group.default.id
+    target_group_arn = aws_lb_target_group.default.id
     type             = "forward"
   }
 }
