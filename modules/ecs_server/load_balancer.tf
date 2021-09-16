@@ -1,5 +1,5 @@
 module "alb" {
-  count  = var.enable_load_balancer ? length(var.load_balancer_arn) > 0 && length(var.load_balancer_name) > 0 && length(var.target_group_arn) > 0 && length(var.lb_security_group_id) > 0 ? 0 : 1 : 0
+  count  = var.enable_load_balancer ? local.use_existing_lb ? 0 : 1 : 0
   source = "../load_balancer"
 
   full_name   = local.full_name
@@ -13,26 +13,46 @@ module "alb" {
 }
 
 data "aws_lb" "existing" {
-  count = var.enable_load_balancer ? length(var.load_balancer_arn) > 0 && length(var.load_balancer_name) > 0 && length(var.target_group_arn) > 0 && length(var.lb_security_group_id) > 0 ? 1 : 0 : 0
+  count = var.enable_load_balancer ? local.use_existing_lb ? 1 : 0 : 0
   arn   = var.load_balancer_arn
   name  = var.load_balancer_name
 }
 
 data "aws_security_group" "existing" {
-  count = var.enable_load_balancer ? length(var.load_balancer_arn) > 0 && length(var.load_balancer_name) > 0 && length(var.target_group_arn) > 0 && length(var.lb_security_group_id) > 0 ? 1 : 0 : 0
+  count = var.enable_load_balancer ? local.use_existing_lb ? 1 : 0 : 0
   id    = var.lb_security_group_id
 }
 
-data "aws_lb_target_group" "existing" {
-  count = var.enable_load_balancer ? length(var.load_balancer_arn) > 0 && length(var.load_balancer_name) > 0 && length(var.target_group_arn) > 0 && length(var.lb_security_group_id) > 0 ? 1 : 0 : 0
-  arn   = var.target_group_arn
+resource "aws_lb_target_group" "default" {
+  count       = var.enable_load_balancer ? 1 : 0
+  name        = local.full_name
+  port        = 80
+  protocol    = "HTTPS"
+  vpc_id      = var.vpc_id
+  target_type = "ip"
+
+  health_check {
+    healthy_threshold   = "3"
+    interval            = "30"
+    protocol            = "HTTPS"
+    matcher             = "200"
+    timeout             = "3"
+    path                = var.health_check_path
+    unhealthy_threshold = "2"
+  }
+
+  tags = merge(var.tags, {
+    Service    = "EC2"
+    Feature    = "TargetGroup"
+    ForFeature = "LoadBalancer"
+  })
 }
 
 resource "aws_security_group_rule" "ingresses" {
   for_each = { for vm in var.enable_load_balancer ? [var.containers_data[0]] : [] : vm.port => vm }
 
   type              = "ingress"
-  security_group_id = var.enable_load_balancer ? length(var.load_balancer_arn) > 0 && length(var.load_balancer_name) > 0 && length(var.target_group_arn) > 0 && length(var.lb_security_group_id) > 0 ? data.aws_security_group.existing[0].id : module.alb[0].security_group_id : null
+  security_group_id = var.enable_load_balancer ? local.use_existing_lb ? data.aws_security_group.existing[0].id : module.alb[0].security_group_id : null
 
   protocol         = lookup(each.value, "protocol", "tcp")
   from_port        = each.value.port
@@ -41,29 +61,11 @@ resource "aws_security_group_rule" "ingresses" {
   ipv6_cidr_blocks = jsondecode(lookup(each.value, "ipv6_cidr", "[\"::/0\"]"))
 }
 
-# # Redirect to https listener
-# resource "aws_lb_listener" "http" {
-#   for_each          = { for vm in var.enable_load_balancer ? [var.containers_data[0]] : [] : vm.port => vm }
-#   load_balancer_arn = var.enable_load_balancer ? length(var.load_balancer_arn) > 0 && length(var.load_balancer_name) > 0 && length(var.target_group_arn) > 0 && length(var.lb_security_group_id) > 0 ? data.aws_lb.existing[0].arn : module.alb[0].arn : null
-#   port              = each.value.port
-#   protocol          = "HTTP"
-
-#   default_action {
-#     type = "redirect"
-
-#     redirect {
-#       port        = each.value.port
-#       protocol    = "HTTPS"
-#       status_code = "HTTP_301"
-#     }
-#   }
-# }
-
 # Redirect traffic to target group
 resource "aws_lb_listener" "https" {
   for_each = { for vm in var.enable_load_balancer ? [var.containers_data[0]] : [] : vm.port => vm }
 
-  load_balancer_arn = var.enable_load_balancer ? length(var.load_balancer_arn) > 0 && length(var.load_balancer_name) > 0 && length(var.target_group_arn) > 0 && length(var.lb_security_group_id) > 0 ? data.aws_lb.existing[0].arn : module.alb[0].arn : null
+  load_balancer_arn = var.enable_load_balancer ? local.use_existing_lb ? data.aws_lb.existing[0].arn : module.alb[0].arn : null
   port              = each.value.port
   protocol          = "HTTPS"
 
@@ -71,7 +73,7 @@ resource "aws_lb_listener" "https" {
   certificate_arn = var.alb_cert_arn
 
   default_action {
-    target_group_arn = var.enable_load_balancer ? length(var.load_balancer_arn) > 0 && length(var.load_balancer_name) > 0 && length(var.target_group_arn) > 0 && length(var.lb_security_group_id) > 0 ? data.aws_lb_target_group.existing[0].arn : module.alb[0].target_group_arn : null
+    target_group_arn = var.enable_load_balancer ? aws_lb_target_group.default.arn : null
     type             = "forward"
   }
 }
