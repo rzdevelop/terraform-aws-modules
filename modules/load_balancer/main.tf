@@ -29,6 +29,7 @@ resource "aws_security_group" "lb" {
   }
 
   tags = merge(var.tags, {
+    Name       = "${var.full_name}-lb-sec-group"
     Module     = "SecurityGroup"
     Service    = "EC2"
     Feature    = "SecurityGroup"

@@ -40,3 +40,38 @@ resource "aws_security_group_rule" "ingresses" {
   cidr_blocks      = jsondecode(lookup(each.value, "cidr", "[\"0.0.0.0/0\"]"))
   ipv6_cidr_blocks = jsondecode(lookup(each.value, "ipv6_cidr", "[\"::/0\"]"))
 }
+
+# Redirect to https listener
+resource "aws_lb_listener" "http" {
+  for_each          = { for vm in var.enable_load_balancer ? var.containers_data : [] : vm.port => vm }
+  load_balancer_arn = var.enable_load_balancer ? local.prevent_lb_creation ? data.aws_lb.existing[0].arn : module.alb[0].arn : null
+  port              = each.value.port
+  protocol          = "HTTP"
+
+  default_action {
+    type = "redirect"
+
+    redirect {
+      port        = 443
+      protocol    = "HTTPS"
+      status_code = "HTTP_301"
+    }
+  }
+}
+
+# Redirect traffic to target group
+resource "aws_lb_listener" "https" {
+  for_each = { for vm in var.enable_load_balancer ? var.containers_data : [] : vm.port => vm }
+
+  load_balancer_arn = var.enable_load_balancer ? local.prevent_lb_creation ? data.aws_lb.existing[0].arn : module.alb[0].arn : null
+  port              = each.value.port
+  protocol          = "HTTPS"
+
+  ssl_policy      = "ELBSecurityPolicy-2016-08"
+  certificate_arn = var.alb_cert_arn
+
+  default_action {
+    target_group_arn = var.enable_load_balancer ? local.prevent_lb_creation ? data.aws_lb_target_group.existing[0].arn : module.alb[0].target_group_arn : null
+    type             = "forward"
+  }
+}
