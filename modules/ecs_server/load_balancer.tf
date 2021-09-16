@@ -1,113 +1,42 @@
-resource "aws_security_group" "alb" {
-  count       = var.enable_load_balancer ? 1 : 0
-  name        = "${local.full_name}-alb"
-  description = "ALB Security Group"
+module "alb" {
+  count  = var.enable_load_balancer ? local.prevent_lb_creation ? 0 : 1 : 0
+  source = "../load_balancer"
+
+  full_name   = local.full_name
   vpc_id      = var.vpc_id
-
-  ingress {
-    protocol         = "tcp"
-    from_port        = 80
-    to_port          = 80
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
-  }
-
-  ingress {
-    protocol         = "tcp"
-    from_port        = 443
-    to_port          = 443
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
-  }
-
-  egress {
-    protocol         = "-1"
-    from_port        = 0
-    to_port          = 0
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
-  }
+  subnets     = var.subnets
+  lb_cert_arn = var.alb_cert_arn
 
   tags = merge(local.default_tags, {
-    Service    = "EC2"
-    Feature    = "SecurityGroup"
-    Module     = "SecurityGroup"
-    ForFeature = "ECSService"
+    Module = "ALB"
   })
 }
 
-resource "aws_lb" "default" {
-  count              = var.enable_load_balancer ? 1 : 0
-  name               = local.full_name
-  internal           = false
-  load_balancer_type = "application"
-  security_groups    = [aws_security_group.alb[0].id]
-  subnets            = var.subnets
-
-  enable_deletion_protection = false
-
-  tags = merge(local.default_tags, {
-    Service    = "EC2"
-    Feature    = "LoadBalancer"
-    ForFeature = "ECSService"
-  })
+data "aws_lb" "existing" {
+  count = var.enable_load_balancer ? local.prevent_lb_creation ? 1 : 0 : 0
+  arn   = var.load_balancer_arn
+  name  = var.load_balancer_name
 }
 
-resource "aws_alb_target_group" "default" {
-  count       = var.enable_load_balancer ? 1 : 0
-  name        = local.full_name
-  port        = 5000
-  protocol    = "HTTP"
-  vpc_id      = var.vpc_id
-  target_type = "ip"
-
-  health_check {
-    healthy_threshold   = "3"
-    interval            = "30"
-    protocol            = "HTTP"
-    matcher             = "200"
-    timeout             = "3"
-    path                = "/"
-    unhealthy_threshold = "2"
-  }
-
-  tags = merge(local.default_tags, {
-    Service    = "EC2"
-    Feature    = "LoadBalancer"
-    ForFeature = "ECSService"
-  })
+data "aws_security_group" "existing" {
+  count = var.enable_load_balancer ? local.prevent_lb_creation ? 1 : 0 : 0
+  id    = var.lb_security_group_id
 }
 
-# Redirect to https listener
-resource "aws_alb_listener" "http" {
-  count             = var.enable_load_balancer ? 1 : 0
-  load_balancer_arn = aws_lb.default[0].id
-  port              = 80
-  protocol          = "HTTP"
-
-  default_action {
-    type = "redirect"
-
-    redirect {
-      port        = 443
-      protocol    = "HTTPS"
-      status_code = "HTTP_301"
-    }
-  }
+data "aws_lb_target_group" "existing" {
+  count = var.enable_load_balancer ? local.prevent_lb_creation ? 1 : 0 : 0
+  arn   = var.target_group_arn
 }
 
-# Redirect traffic to target group
-resource "aws_alb_listener" "https" {
-  count             = var.enable_load_balancer ? 1 : 0
-  load_balancer_arn = aws_lb.default[0].id
-  port              = 443
-  protocol          = "HTTPS"
+resource "aws_security_group_rule" "ingresses" {
+  for_each = var.enable_load_balancer ? var.containers_data : []
 
-  ssl_policy      = "ELBSecurityPolicy-2016-08"
-  certificate_arn = var.alb_cert_arn
+  type              = "ingress"
+  security_group_id = var.enable_load_balancer ? local.prevent_lb_creation ? data.aws_security_group.existing[0].id : module.alb[0].security_group_id : null
 
-  default_action {
-    target_group_arn = aws_alb_target_group.default[0].id
-    type             = "forward"
-  }
+  protocol         = lookup(each.value, "protocol", "tcp")
+  from_port        = each.value.port
+  to_port          = each.value.port
+  cidr_blocks      = jsondecode(lookup(each.value, "cidr", "[\"0.0.0.0/0\"]"))
+  ipv6_cidr_blocks = jsondecode(lookup(each.value, "ipv6_cidr", "[\"::/0\"]"))
 }

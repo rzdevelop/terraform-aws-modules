@@ -1,8 +1,9 @@
 locals {
-  account_id   = data.aws_caller_identity.current.account_id
-  cluster_arn  = "arn:aws:ecs:${var.region}:${local.account_id}:cluster/${var.cluster_name}"
-  full_name    = module.tags.full_name
-  default_tags = module.tags.default_tags
+  account_id          = data.aws_caller_identity.current.account_id
+  cluster_arn         = "arn:aws:ecs:${var.region}:${local.account_id}:cluster/${var.cluster_name}"
+  full_name           = module.tags.full_name
+  default_tags        = module.tags.default_tags
+  prevent_lb_creation = length(var.load_balancer_arn) > 0 && length(var.load_balancer_name) > 0 && length(var.target_group_arn) > 0 && length(var.lb_security_group_id) > 0
 }
 
 data "aws_caller_identity" "current" {}
@@ -91,7 +92,7 @@ module "ecs" {
 
   enable_load_balancer              = var.enable_load_balancer
   health_check_grace_period_seconds = var.health_check_grace_period_seconds
-  target_group_arn                  = var.enable_load_balancer ? aws_alb_target_group.default[0].arn : null
+  target_group_arn                  = var.enable_load_balancer ? local.prevent_lb_creation ? data.aws_lb_target_group.existing[0].arn : module.alb[0].target_group_arn : null
   container_name                    = var.enable_load_balancer ? var.containers_data[0].name : null
   container_port                    = var.enable_load_balancer ? var.containers_data[0].port : null
 

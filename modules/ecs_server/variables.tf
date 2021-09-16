@@ -193,3 +193,21 @@ variable "load_balancer_arn" {
   type        = string
   default     = ""
 }
+
+variable "load_balancer_name" {
+  description = "optional, provide a load balancer name to use instead of creating one"
+  type        = string
+  default     = ""
+}
+
+variable "target_group_arn" {
+  description = "optional, provide a target group arn to use instead of creating one"
+  type        = string
+  default     = ""
+}
+
+variable "lb_security_group_id" {
+  description = "optional, provide a load balancer security group arn to use instead of creating one"
+  type        = string
+  default     = ""
+}
