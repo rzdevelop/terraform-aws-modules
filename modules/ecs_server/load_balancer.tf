@@ -41,23 +41,23 @@ resource "aws_security_group_rule" "ingresses" {
   ipv6_cidr_blocks = jsondecode(lookup(each.value, "ipv6_cidr", "[\"::/0\"]"))
 }
 
-# Redirect to https listener
-resource "aws_lb_listener" "http" {
-  for_each          = { for vm in var.enable_load_balancer ? [var.containers_data[0]] : [] : vm.port => vm }
-  load_balancer_arn = var.enable_load_balancer ? length(var.load_balancer_arn) > 0 && length(var.load_balancer_name) > 0 && length(var.target_group_arn) > 0 && length(var.lb_security_group_id) > 0 ? data.aws_lb.existing[0].arn : module.alb[0].arn : null
-  port              = each.value.port
-  protocol          = "HTTP"
+# # Redirect to https listener
+# resource "aws_lb_listener" "http" {
+#   for_each          = { for vm in var.enable_load_balancer ? [var.containers_data[0]] : [] : vm.port => vm }
+#   load_balancer_arn = var.enable_load_balancer ? length(var.load_balancer_arn) > 0 && length(var.load_balancer_name) > 0 && length(var.target_group_arn) > 0 && length(var.lb_security_group_id) > 0 ? data.aws_lb.existing[0].arn : module.alb[0].arn : null
+#   port              = each.value.port
+#   protocol          = "HTTP"
 
-  default_action {
-    type = "redirect"
+#   default_action {
+#     type = "redirect"
 
-    redirect {
-      port        = each.value.port
-      protocol    = "HTTPS"
-      status_code = "HTTP_301"
-    }
-  }
-}
+#     redirect {
+#       port        = each.value.port
+#       protocol    = "HTTPS"
+#       status_code = "HTTP_301"
+#     }
+#   }
+# }
 
 # Redirect traffic to target group
 resource "aws_lb_listener" "https" {
