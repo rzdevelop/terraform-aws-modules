@@ -61,7 +61,7 @@ resource "aws_lb_listener" "http" {
 
 # Redirect traffic to target group
 resource "aws_lb_listener" "https" {
-  for_each = { for vm in var.enable_load_balancer ? var.containers_data : [] : vm.port => vm }
+  for_each = { for vm in var.enable_load_balancer ? [var.containers_data[0]] : [] : vm.port => vm }
 
   load_balancer_arn = var.enable_load_balancer ? length(var.load_balancer_arn) > 0 && length(var.load_balancer_name) > 0 && length(var.target_group_arn) > 0 && length(var.lb_security_group_id) > 0 ? data.aws_lb.existing[0].arn : module.alb[0].arn : null
   port              = each.value.port
