@@ -187,3 +187,9 @@ variable "deployment_maximum_percent" {
   type        = number
   default     = 200
 }
+
+variable "load_balancer_arn" {
+  description = "optional, provide a load balancer arn to use instead of creating one"
+  type        = string
+  default     = ""
+}
