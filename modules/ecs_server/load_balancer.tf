@@ -41,7 +41,7 @@ resource "aws_lb_target_group" "default" {
     unhealthy_threshold = "2"
   }
 
-  tags = merge(var.tags, {
+  tags = merge(local.default_tags, {
     Service    = "EC2"
     Feature    = "TargetGroup"
     ForFeature = "LoadBalancer"

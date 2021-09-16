@@ -194,14 +194,14 @@ variable "load_balancer_name" {
   default     = ""
 }
 
-variable "target_group_arn" {
-  description = "optional, provide a target group arn to use instead of creating one"
-  type        = string
-  default     = ""
-}
-
 variable "lb_security_group_id" {
   description = "optional, provide a load balancer security group arn to use instead of creating one"
   type        = string
   default     = ""
+}
+
+variable "health_check_path" {
+  description = "Health Check Path"
+  type        = string
+  default     = "/"
 }
