@@ -45,7 +45,7 @@ resource "aws_lb" "default" {
 
   enable_deletion_protection = var.enable_deletion_protection
 
-  tags = merge(local.default_tags, {
+  tags = merge(var.tags, {
     Service = "EC2"
     Feature = "LoadBalancer"
   })
