@@ -27,7 +27,6 @@ module "cloudwatch" {
 }
 
 resource "aws_security_group" "ecs_task" {
-  count       = var.enable_load_balancer ? 1 : 0
   name        = "${local.full_name}-ecs-task"
   description = "ECS Task Security Group"
   vpc_id      = var.vpc_id
@@ -81,7 +80,7 @@ module "ecs" {
   full_name                          = local.full_name
   cluster_arn                        = local.cluster_arn
   task_definition_arn                = aws_ecs_task_definition.task_definition.arn
-  security_groups                    = [aws_security_group.ecs_task[0].id]
+  security_groups                    = [aws_security_group.ecs_task.id]
   subnets                            = var.subnets
   assign_public_ip                   = var.assign_public_ip
   launch_type                        = var.launch_type
