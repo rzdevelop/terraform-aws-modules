@@ -37,3 +37,14 @@ variable "subnets" {
   description = "Subnets"
   type        = list(string)
 }
+
+variable "health_check_path" {
+  description = "Health Check Path"
+  type        = string
+  default     = "/"
+}
+
+variable "lb_cert_arn" {
+  description = "Load Balancer Certificate ARN"
+  type        = string
+}

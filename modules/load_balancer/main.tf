@@ -36,6 +36,64 @@ resource "aws_security_group" "lb" {
   })
 }
 
+resource "aws_lb_target_group" "default" {
+  name        = var.full_name
+  port        = 80
+  protocol    = "HTTP"
+  vpc_id      = var.vpc_id
+  target_type = "ip"
+
+  health_check {
+    healthy_threshold   = "3"
+    interval            = "30"
+    protocol            = "HTTP"
+    matcher             = "200"
+    timeout             = "3"
+    path                = var.health_check_path
+    unhealthy_threshold = "2"
+  }
+
+  tags = merge(var.default_tags, {
+    Service    = "EC2"
+    Feature    = "TargetGroup"
+    ForFeature = "LoadBalancer"
+  })
+}
+
+# Redirect to https listener
+resource "aws_lb_listener" "http" {
+  count             = var.enable_load_balancer ? 1 : 0
+  load_balancer_arn = aws_lb.default[0].id
+  port              = 80
+  protocol          = "HTTP"
+
+  default_action {
+    type = "redirect"
+
+    redirect {
+      port        = 443
+      protocol    = "HTTPS"
+      status_code = "HTTP_301"
+    }
+  }
+}
+
+# Redirect traffic to target group
+resource "aws_lb_listener" "https" {
+  load_balancer_arn = aws_lb.default.id
+  port              = 443
+  protocol          = "HTTPS"
+
+  ssl_policy      = "ELBSecurityPolicy-2016-08"
+  certificate_arn = var.lb_cert_arn
+
+  default_action {
+    target_group_arn = aws_alb_target_group.default.id
+    type             = "forward"
+  }
+}
+
+
 resource "aws_lb" "default" {
   name               = var.full_name
   internal           = var.internal
