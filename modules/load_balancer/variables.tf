@@ -29,11 +29,11 @@ variable "enable_deletion_protection" {
 
 variable "additional_security_groups" {
   description = "Additional Security Groups"
-  type        = array(string)
+  type        = list(string)
   default     = []
 }
 
 variable "subnets" {
   description = "Subnets"
-  type        = array(string)
+  type        = list(string)
 }
