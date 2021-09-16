@@ -73,7 +73,7 @@ resource "aws_lb_listener" "https" {
   certificate_arn = var.alb_cert_arn
 
   default_action {
-    target_group_arn = var.enable_load_balancer ? aws_lb_target_group.default.arn : null
+    target_group_arn = var.enable_load_balancer ? aws_lb_target_group.default[0].arn : null
     type             = "forward"
   }
 }
