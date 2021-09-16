@@ -27,14 +27,14 @@ resource "aws_lb_target_group" "default" {
   count       = var.enable_load_balancer ? 1 : 0
   name        = local.full_name
   port        = 80
-  protocol    = "HTTPS"
+  protocol    = "HTTP"
   vpc_id      = var.vpc_id
   target_type = "ip"
 
   health_check {
     healthy_threshold   = "3"
     interval            = "30"
-    protocol            = "HTTPS"
+    protocol            = "HTTP"
     matcher             = "200"
     timeout             = "3"
     path                = var.health_check_path
