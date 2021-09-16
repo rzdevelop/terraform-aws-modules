@@ -29,7 +29,7 @@ data "aws_lb_target_group" "existing" {
 }
 
 resource "aws_security_group_rule" "ingresses" {
-  for_each = { for vm in var.enable_load_balancer ? var.containers_data : [] : vm.port => vm }
+  for_each = { for vm in var.enable_load_balancer ? [var.containers_data[0]] : [] : vm.port => vm }
 
   type              = "ingress"
   security_group_id = var.enable_load_balancer ? local.prevent_lb_creation ? data.aws_security_group.existing[0].id : module.alb[0].security_group_id : null
