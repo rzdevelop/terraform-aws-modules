@@ -43,7 +43,7 @@ resource "aws_security_group_rule" "ingresses" {
 
 # Redirect to https listener
 resource "aws_lb_listener" "http" {
-  for_each          = { for vm in var.enable_load_balancer ? var.containers_data : [] : vm.port => vm }
+  for_each          = { for vm in var.enable_load_balancer ? [var.containers_data[0]] : [] : vm.port => vm }
   load_balancer_arn = var.enable_load_balancer ? local.prevent_lb_creation ? data.aws_lb.existing[0].arn : module.alb[0].arn : null
   port              = each.value.port
   protocol          = "HTTP"
