@@ -140,12 +140,6 @@ variable "containers_data" {
   default     = []
 }
 
-variable "target_group_arn" {
-  description = "Target Group ARN when load balancer is enabled"
-  type        = string
-  default     = ""
-}
-
 variable "health_check_grace_period_seconds" {
   description = "Health Check Grace Period when load balancer is enabled"
   type        = number
