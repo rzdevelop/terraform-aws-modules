@@ -98,8 +98,8 @@ module "ecs" {
   enable_load_balancer              = var.enable_load_balancer
   health_check_grace_period_seconds = var.health_check_grace_period_seconds
   target_group_arn                  = var.enable_load_balancer ? aws_lb_target_group.default[0].arn : null
-  container_name                    = var.enable_load_balancer ? var.excluded_containers_data[0].name : null
-  container_port                    = var.enable_load_balancer ? var.excluded_containers_data[0].port : null
+  container_name                    = var.enable_load_balancer ? local.excluded_containers_data[0].name : null
+  container_port                    = var.enable_load_balancer ? local.excluded_containers_data[0].port : null
 
   tags = merge(local.default_tags, {
     Module = "ECS"
