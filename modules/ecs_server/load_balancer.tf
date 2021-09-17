@@ -95,7 +95,7 @@ resource "aws_lb_listener_rule" "https" {
   }
 }
 
-resource "aws_lb_listener_rule" "https" {
+resource "aws_lb_listener_rule" "http" {
   for_each = var.enable_load_balancer ? var.lb_listeners_paths: {}
   listener_arn = var.enable_load_balancer ? each.value.http_listener_arn : null
   priority     = each.value.priority
