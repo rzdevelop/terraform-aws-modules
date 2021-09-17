@@ -95,9 +95,3 @@ variable "deployment_maximum_percent" {
   type        = number
   default     = 200
 }
-
-variable "volume" {
-  description = "ECS Volume"
-  type        = map(string)
-  default     = null
-}

@@ -68,6 +68,21 @@ resource "aws_ecs_task_definition" "task_definition" {
   requires_compatibilities = var.requires_compatibilities
   container_definitions    = var.container_definitions
 
+  dynamic "volume" {
+    for_each = var.volume != null ? [var.volume] : []
+
+    content {
+      name = volume.value.name
+      dockerVolumeConfiguration = {
+        "driverOpts"    = jsondecode(volume.value.dockerVolumeConfiguration).driverOpts
+        "labels"        = jsondecode(volume.value.dockerVolumeConfiguration).labels
+        "driver"        = jsondecode(volume.value.dockerVolumeConfiguration).driver
+        "scope"         = jsondecode(volume.value.dockerVolumeConfiguration).scope
+        "autoprovision" = jsondecode(volume.value.dockerVolumeConfiguration).autoprovision
+      }
+    }
+  }
+
   tags = merge(local.default_tags, {
     Service    = "ECS"
     Feature    = "TaskDefinition"
