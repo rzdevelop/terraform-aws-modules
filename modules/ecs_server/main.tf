@@ -73,7 +73,7 @@ resource "aws_ecs_task_definition" "task_definition" {
 
     content {
       name = volume.value.name
-      dockerVolumeConfiguration = jsondecode(volume.value.dockerVolumeConfiguration)
+      docker_volume_configuration = jsondecode(volume.value.dockerVolumeConfiguration)
     }
   }
 
