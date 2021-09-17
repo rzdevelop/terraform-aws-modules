@@ -76,7 +76,7 @@ resource "aws_ecs_task_definition" "task_definition" {
       dynamic "docker_volume_configuration" {
         for_each = jsondecode(volume.value.dockerVolumeConfiguration)
         content {
-          driverOpts    = docker_volume_configuration.value.driverOpts
+          driver_opts   = docker_volume_configuration.value.driverOpts
           labels        = docker_volume_configuration.value.labels
           driver        = docker_volume_configuration.value.driver
           scope         = docker_volume_configuration.value.scope
