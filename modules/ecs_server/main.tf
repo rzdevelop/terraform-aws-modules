@@ -1,9 +1,14 @@
 locals {
-  account_id      = data.aws_caller_identity.current.account_id
-  cluster_arn     = "arn:aws:ecs:${var.region}:${local.account_id}:cluster/${var.cluster_name}"
-  full_name       = module.tags.full_name
-  default_tags    = module.tags.default_tags
-  use_existing_lb = length(var.load_balancer_arn) > 0 && length(var.load_balancer_name) > 0 && length(var.lb_security_group_id) > 0
+  account_id                        = data.aws_caller_identity.current.account_id
+  cluster_arn                       = "arn:aws:ecs:${var.region}:${local.account_id}:cluster/${var.cluster_name}"
+  full_name                         = module.tags.full_name
+  default_tags                      = module.tags.default_tags
+  use_existing_lb                   = length(var.load_balancer_arn) > 0 && length(var.load_balancer_name) > 0 && length(var.lb_security_group_id) > 0
+  containers_data_map               = { for i, container_data in var.containers_data : tostring(i) => container_data }
+  excluded_containers_data_keys     = compact([for i, container_data in local.containers_data_map : container_data.exclude == "true" ? i : ""])
+  not_excluded_containers_data_keys = compact([for i, container_data in local.containers_data_map : container_data.exclude != "true" ? i : ""])
+  excluded_containers_data          = [for key in local.excluded_containers_data_keys : lookup(local.container_datas_map, key)]
+  not_excluded_containers_data      = [for key in local.not_excluded_containers_data_keys : lookup(local.container_datas_map, key)]
 }
 
 data "aws_caller_identity" "current" {}
@@ -68,19 +73,6 @@ resource "aws_ecs_task_definition" "task_definition" {
   requires_compatibilities = var.requires_compatibilities
   container_definitions    = var.container_definitions
 
-  dynamic "volume" {
-    for_each = var.volume != null ? [var.volume] : []
-
-    content {
-      name = volume.value.name
-      docker_volume_configuration {
-          driver        = volume.value.driver
-          scope         = volume.value.scope
-          autoprovision = volume.value.autoprovision
-      }
-    }
-  }
-
   tags = merge(local.default_tags, {
     Service    = "ECS"
     Feature    = "TaskDefinition"
@@ -106,8 +98,8 @@ module "ecs" {
   enable_load_balancer              = var.enable_load_balancer
   health_check_grace_period_seconds = var.health_check_grace_period_seconds
   target_group_arn                  = var.enable_load_balancer ? aws_lb_target_group.default[0].arn : null
-  container_name                    = var.enable_load_balancer ? var.containers_data[0].name : null
-  container_port                    = var.enable_load_balancer ? var.containers_data[0].port : null
+  container_name                    = var.enable_load_balancer ? var.excluded_containers_data[0].name : null
+  container_port                    = var.enable_load_balancer ? var.excluded_containers_data[0].port : null
 
   tags = merge(local.default_tags, {
     Module = "ECS"

@@ -199,9 +199,3 @@ variable "health_check_path" {
   type        = string
   default     = "/"
 }
-
-variable "volume" {
-  description = "ECS Volume"
-  type        = map(string)
-  default     = null
-}
