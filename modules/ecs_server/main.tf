@@ -74,8 +74,8 @@ resource "aws_ecs_task_definition" "task_definition" {
     content {
       name = volume.value.name
       docker_volume_configuration {
-          driver_opts   = volume.value.driverOpts
-          labels        = volume.value.labels
+          driver_opts   = volume.value.driverOpts == null ? null : volume.value.driverOpts
+          labels        = volume.value.labels == null ? null : volume.value.labels
           driver        = volume.value.driver
           scope         = volume.value.scope
           autoprovision = volume.value.autoprovision
