@@ -38,12 +38,6 @@ variable "region" {
   default     = "us-east-1"
 }
 
-variable "container_port" {
-  description = "Container port when load balancer is enabled"
-  type        = number
-  default     = -1
-}
-
 variable "task_role_actions" {
   description = "Task Role Actions"
   type        = list(string)
@@ -204,4 +198,10 @@ variable "health_check_path" {
   description = "Health Check Path"
   type        = string
   default     = "/"
+}
+
+variable "volume" {
+  description = "ECS Volume"
+  type        = map(string)
+  default     = null
 }

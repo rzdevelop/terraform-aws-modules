@@ -23,6 +23,15 @@ resource "aws_ecs_service" "ecs_service" {
     }
   }
 
+  dynamic "volume" {
+    for_each = var.volume != null ? [var.volume] : []
+
+    content {
+      name                      = volume.value.name
+      dockerVolumeConfiguration = volume.value.dockerVolumeConfiguration
+    }
+  }
+
   network_configuration {
     security_groups  = var.security_groups
     subnets          = var.subnets
