@@ -7,8 +7,8 @@ locals {
   containers_data_map               = { for i, container_data in var.containers_data : tostring(i) => container_data }
   excluded_containers_data_keys     = compact([for i, container_data in local.containers_data_map : container_data.exclude == "true" ? i : ""])
   not_excluded_containers_data_keys = compact([for i, container_data in local.containers_data_map : container_data.exclude != "true" ? i : ""])
-  excluded_containers_data          = [for key in local.excluded_containers_data_keys : lookup(local.container_datas_map, key)]
-  not_excluded_containers_data      = [for key in local.not_excluded_containers_data_keys : lookup(local.container_datas_map, key)]
+  excluded_containers_data          = [for key in local.excluded_containers_data_keys : lookup(local.containers_data_map, key)]
+  not_excluded_containers_data      = [for key in local.not_excluded_containers_data_keys : lookup(local.containers_data_map, key)]
 }
 
 data "aws_caller_identity" "current" {}
