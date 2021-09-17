@@ -34,3 +34,11 @@ output "target_group_id" {
 output "target_group_name" {
   value = aws_lb_target_group.default.name
 }
+
+output "http_listener_arn" {
+  value = aws_lb_listener.http.arn
+}
+
+output "https_listener_arn" {
+  value = aws_lb_listener.https.arn
+}
