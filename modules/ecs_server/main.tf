@@ -104,7 +104,6 @@ module "ecs" {
   desired_count                      = var.desired_count
   deployment_minimum_healthy_percent = var.deployment_minimum_healthy_percent
   deployment_maximum_percent         = var.deployment_maximum_percent
-  volume                             = var.volume
 
   enable_load_balancer              = var.enable_load_balancer
   health_check_grace_period_seconds = var.health_check_grace_period_seconds
