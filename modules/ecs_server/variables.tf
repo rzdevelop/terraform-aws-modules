@@ -203,9 +203,9 @@ variable "health_check_path" {
 variable "lb_listeners_paths" {
   type = map(object({
     https_listener_arn = string
-    http_listener_arn = string
-    priority = number
+    http_listener_arn  = string
+    priority           = number
   }))
   description = "Map with the path with listener arn and priority"
-  default = {}
+  default     = {}
 }
