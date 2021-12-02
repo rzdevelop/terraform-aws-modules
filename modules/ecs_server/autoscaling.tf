@@ -4,8 +4,6 @@ locals {
   scale_down_name = "${local.service_name}-down"
 }
 
-data "aws_caller_identity" "current" {}
-
 resource "aws_appautoscaling_target" "ecs_target" {
   count        = var.enable_autoscaling ? 1 : 0
   max_capacity = var.max_capacity
