@@ -24,3 +24,8 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+variable "origin_access_identity" {
+  description = "Cloudfront Origin Access Identity"
+  type        = string
+}

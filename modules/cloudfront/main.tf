@@ -18,11 +18,8 @@ resource "aws_cloudfront_distribution" "default" {
     domain_name = var.domain_name
     origin_id   = var.origin_id
 
-    custom_origin_config {
-      http_port              = "80"
-      https_port             = "443"
-      origin_protocol_policy = "http-only"
-      origin_ssl_protocols   = ["SSLv3", "TLSv1", "TLSv1.1", "TLSv1.2"]
+    s3_origin_config {
+      origin_access_identity = var.origin_access_identity
     }
   }
 
@@ -42,8 +39,8 @@ resource "aws_cloudfront_distribution" "default" {
     }
 
     min_ttl     = 0
-    max_ttl     = 31536000
-    default_ttl = 86400
+    max_ttl     = 0
+    default_ttl = 0
     compress    = true
   }
 
