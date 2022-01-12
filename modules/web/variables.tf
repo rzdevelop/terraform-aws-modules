@@ -7,8 +7,8 @@ variable "app_name" {
   description = "Name of the Application"
 }
 
-variable "role" {
-  description = "Application role"
+variable "purpose" {
+  description = "Application purpose"
   default     = "web"
 }
 
