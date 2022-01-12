@@ -8,6 +8,7 @@ module "naming_conventions" {
 module "security_group" {
   source            = "../security_group"
   full_name         = module.naming_conventions.full_name
+  description       = "Security Group for ${module.naming_conventions.full_name}"
   ingress_from_port = 5432
   ingress_to_port   = 5432
   ingress_protocol  = "tcp"
