@@ -95,3 +95,9 @@ variable "deployment_maximum_percent" {
   type        = number
   default     = 200
 }
+
+variable "enable_network_configuration" {
+  description = "ECS Service Enable Network Configuration"
+  type        = bool
+  default     = true
+}
