@@ -62,8 +62,8 @@ variable "auto_turn_of_and_on" {
       schedule     = "cron(30 7 * * ? *)"
     }
     on = {
-      min_capacity = 2
-      max_capacity = 1
+      min_capacity = 1
+      max_capacity = 2
       schedule     = "cron(0 14 * * ? *)"
     }
   }
@@ -74,6 +74,18 @@ variable "desired_count" {
   type        = number
   default     = 1
   description = "The ECS Service desired task count"
+}
+
+variable "min_capacity" {
+  type        = number
+  default     = 1
+  description = "The ECS AutoScaling Targer min capacity"
+}
+
+variable "max_capacity" {
+  type        = number
+  default     = 2
+  description = "The ECS AutoScaling Targer max capacity"
 }
 
 variable "app_name" {

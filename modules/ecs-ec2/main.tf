@@ -64,5 +64,5 @@ resource "aws_route53_record" "www" {
   name     = each.key
   type     = "CNAME"
   ttl      = "5"
-  records  = [data.aws_lb.default[0].arn]
+  records  = [data.aws_lb.default[0].dns_name]
 }

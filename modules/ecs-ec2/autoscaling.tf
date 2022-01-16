@@ -51,8 +51,8 @@ locals {
 }
 
 resource "aws_appautoscaling_target" "ecs_target" {
-  max_capacity = 2
-  min_capacity = 1
+  max_capacity = var.max_capacity
+  min_capacity = var.min_capacity
   resource_id  = "service/${var.cluster_name}/${local.service_name}"
   role_arn = format(
     "arn:aws:iam::%s:role/aws-service-role/ecs.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_ECSService",
