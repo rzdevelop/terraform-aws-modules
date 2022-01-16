@@ -13,6 +13,11 @@ output "ecs_task_role_name" {
   value       = aws_iam_role.ecs_task_role.name
 }
 
+output "ecs_task_role_arn" {
+  description = "The ECS Task Role ARN to attach policies as needed"
+  value       = aws_iam_role.ecs_task_role.arn
+}
+
 
 data "aws_iam_policy_document" "ecs_trust_policy" {
   version = "2012-10-17"
