@@ -32,6 +32,7 @@ resource "aws_ecs_service" "default" {
   launch_type           = "EC2"
   propagate_tags        = "SERVICE"
   wait_for_steady_state = false
+  health_check_grace_period_seconds  = 60
 
   dynamic "load_balancer" {
     for_each = var.enable_load_balancer ? [{
@@ -45,6 +46,15 @@ resource "aws_ecs_service" "default" {
       container_name   = load_balancer.value.container_name
       container_port   = load_balancer.value.container_port
     }
+  }
+
+  deployment_circuit_breaker {
+    enable = true
+    rollback = true
+  }
+
+  deployment_controller {
+    type = "ECS"
   }
 
   lifecycle {
