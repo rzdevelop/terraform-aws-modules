@@ -22,6 +22,12 @@ variable "domain" {
   description = "When enable_route53 will set the domain"
 }
 
+variable "lb_priority" {
+  type        = number
+  default     = -1
+  description = "LB Listener Priority"
+}
+
 variable "health_check_path" {
   type        = string
   default     = "/health"

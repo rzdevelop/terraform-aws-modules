@@ -28,7 +28,7 @@ resource "aws_lb_listener_rule" "default" {
   count = var.enable_load_balancer ? 1 : 0
 
   listener_arn = data.aws_lb_listener.https[0].arn
-  priority     = 100
+  priority     = var.lb_priority
 
   action {
     type             = "forward"
