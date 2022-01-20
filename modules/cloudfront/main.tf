@@ -53,7 +53,7 @@ resource "aws_cloudfront_distribution" "default" {
   dynamic "custom_error_response" {
     for_each = toset([400, 401, 402, 403, 404, 500])
     content {
-      error_code            = each.value
+      error_code            = custom_error_response.value
       error_caching_min_ttl = 300
       response_page_path    = "/index.html"
       response_code         = 200
