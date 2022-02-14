@@ -24,7 +24,7 @@ variable "domain" {
 
 variable "lb_priority" {
   type        = number
-  default     = -1
+  default     = 99999
   description = "LB Listener Priority"
 }
 

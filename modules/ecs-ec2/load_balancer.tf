@@ -21,7 +21,7 @@ resource "aws_autoscaling_attachment" "asg_attachment" {
   count = var.enable_load_balancer ? 1 : 0
 
   autoscaling_group_name = data.aws_autoscaling_group.default.id
-  alb_target_group_arn   = aws_alb_target_group.default[0].arn
+  lb_target_group_arn    = aws_alb_target_group.default[0].arn
 }
 
 resource "aws_lb_listener_rule" "default" {
