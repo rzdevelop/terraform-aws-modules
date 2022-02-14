@@ -2,17 +2,19 @@ resource "aws_s3_bucket" "default" {
   bucket        = var.full_name
   force_destroy = true
 
-  server_side_encryption_configuration {
-    rule {
-      apply_server_side_encryption_by_default {
-        sse_algorithm = "AES256"
-      }
-    }
-  }
-
   tags = merge(var.tags, {
     Resource = "S3Bucket"
   })
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "default" {
+  bucket = aws_s3_bucket.default.id
+
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
+  }
 }
 
 resource "aws_s3_bucket_policy" "OAI_policy" {
