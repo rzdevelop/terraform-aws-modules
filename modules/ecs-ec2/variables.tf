@@ -76,6 +76,18 @@ variable "auto_turn_of_and_on" {
   description = "Enable auto turn off and on at night"
 }
 
+variable "disable_cpu_autoscaling" {
+  type        = bool
+  default     = false
+  description = "Flag to disable CPU Autoscaling. Default false."
+}
+
+variable "disable_memory_autoscaling" {
+  type        = bool
+  default     = true
+  description = "Flag to disable CPU Autoscaling. Default true."
+}
+
 variable "desired_count" {
   type        = number
   default     = 1

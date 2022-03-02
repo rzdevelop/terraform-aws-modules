@@ -12,6 +12,7 @@ locals {
       statistic                   = "Average"
       metric_interval_upper_bound = 0
       scaling_adjustment          = -1
+      disable                     = var.disable_cpu_autoscaling
     },
     {
       action                      = "up"
@@ -22,6 +23,7 @@ locals {
       statistic                   = "Average"
       metric_interval_lower_bound = 1
       scaling_adjustment          = 1
+      disable                     = var.disable_cpu_autoscaling
     },
     {
       action                      = "down"
@@ -32,6 +34,7 @@ locals {
       statistic                   = "Average"
       metric_interval_upper_bound = 0
       scaling_adjustment          = -1
+      disable                     = var.disable_memory_autoscaling
     },
     {
       action                      = "up"
@@ -42,11 +45,12 @@ locals {
       statistic                   = "Average"
       metric_interval_lower_bound = 1
       scaling_adjustment          = 1
+      disable                     = var.disable_memory_autoscaling
     },
   ]
 
   iterable_metric_alarms = {
-    for k, v in local.metric_alarms : k => v
+    for k, v in local.metric_alarms : k => v if v.disable == false
   }
 }
 
