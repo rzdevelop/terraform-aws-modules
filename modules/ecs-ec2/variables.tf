@@ -135,3 +135,21 @@ variable "task_definition_arn" {
   type        = string
   description = "The Task Definition ARN"
 }
+
+variable "enable_capacity_provider_strategy" {
+  type           = bool
+  defaultdefault = false
+  description    = "Enable the CapacityProvider strategy block"
+}
+
+variable "capacity_provider_weight" {
+  type        = number
+  default     = 100
+  description = "The CapacityProvider Weight"
+}
+
+variable "capacity_provider" {
+  type        = string
+  defdefault  = ""
+  description = "Capacity Provider name"
+}

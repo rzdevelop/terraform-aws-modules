@@ -24,15 +24,15 @@ module "cloudwatch" {
 }
 
 resource "aws_ecs_service" "default" {
-  name                  = local.full_name
-  cluster               = data.aws_ecs_cluster.default.id
-  task_definition       = var.task_definition_arn
-  desired_count         = var.desired_count
-  force_new_deployment  = true
-  launch_type           = "EC2"
-  propagate_tags        = "SERVICE"
-  wait_for_steady_state = false
-  health_check_grace_period_seconds  = 60
+  name                              = local.full_name
+  cluster                           = data.aws_ecs_cluster.default.id
+  task_definition                   = var.task_definition_arn
+  desired_count                     = var.desired_count
+  force_new_deployment              = true
+  launch_type                       = "EC2"
+  propagate_tags                    = "SERVICE"
+  wait_for_steady_state             = false
+  health_check_grace_period_seconds = 60
 
   dynamic "load_balancer" {
     for_each = var.enable_load_balancer ? [{
@@ -48,8 +48,20 @@ resource "aws_ecs_service" "default" {
     }
   }
 
+  dynamic "load_balancer" {
+    for_each = var.enable_capacity_provider_strategy ? [{
+      capacity_provider = var.capacity_provider
+      weight            = var.capacity_provider_weight
+    }] : []
+
+    content {
+      capacity_provider = load_balancer.value.capacity_provider
+      weight            = load_balancer.value.weight
+    }
+  }
+
   deployment_circuit_breaker {
-    enable = true
+    enable   = true
     rollback = true
   }
 
