@@ -137,9 +137,9 @@ variable "task_definition_arn" {
 }
 
 variable "enable_capacity_provider_strategy" {
-  type           = bool
-  defaultdefault = false
-  description    = "Enable the CapacityProvider strategy block"
+  type        = bool
+  default     = false
+  description = "Enable the CapacityProvider strategy block"
 }
 
 variable "capacity_provider_weight" {
@@ -150,6 +150,6 @@ variable "capacity_provider_weight" {
 
 variable "capacity_provider" {
   type        = string
-  defdefault  = ""
+  default     = ""
   description = "Capacity Provider name"
 }
