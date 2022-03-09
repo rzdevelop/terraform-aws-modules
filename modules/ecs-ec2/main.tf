@@ -48,15 +48,15 @@ resource "aws_ecs_service" "default" {
     }
   }
 
-  dynamic "load_balancer" {
+  dynamic "capacity_provider_strategy" {
     for_each = var.enable_capacity_provider_strategy ? [{
       capacity_provider = var.capacity_provider
       weight            = var.capacity_provider_weight
     }] : []
 
     content {
-      capacity_provider = load_balancer.value.capacity_provider
-      weight            = load_balancer.value.weight
+      capacity_provider = capacity_provider_strategy.value.capacity_provider
+      weight            = capacity_provider_strategy.value.weight
     }
   }
 
