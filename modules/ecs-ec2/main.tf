@@ -29,7 +29,7 @@ resource "aws_ecs_service" "default" {
   task_definition                   = var.task_definition_arn
   desired_count                     = var.desired_count
   force_new_deployment              = true
-  launch_type                       = "EC2"
+  launch_type                       = enable_capacity_provider_strategy ? null : "EC2"
   propagate_tags                    = "SERVICE"
   wait_for_steady_state             = false
   health_check_grace_period_seconds = 60
