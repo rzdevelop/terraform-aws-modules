@@ -13,7 +13,7 @@ variable "parameter_group_name" {
 }
 
 variable "engine_version" {
-  default = "12.4"
+  default = "12.7"
 }
 
 variable "name" {

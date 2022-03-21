@@ -8,7 +8,7 @@ resource "aws_db_instance" "default" {
   storage_type          = var.storage_type
   allocated_storage     = var.allocated_storage
   max_allocated_storage = var.max_allocated_storage
-  name                  = var.name
+  db_name               = var.name
   #   db_subnet_group_name      = var.subnet_group
   parameter_group_name      = var.parameter_group_name
   multi_az                  = "false"

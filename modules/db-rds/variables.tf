@@ -24,3 +24,9 @@ variable "db_name" {
   description = "DB name"
   type        = string
 }
+
+variable "engine_version" {
+  default     = "12.7"
+  description = "Engine Version"
+  type        = string
+}

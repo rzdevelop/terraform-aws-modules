@@ -21,12 +21,13 @@ module "security_group" {
 }
 
 module "rds" {
-  source     = "../rds"
-  sg_id      = module.security_group.id
-  identifier = module.naming_conventions.full_name
-  name       = var.db_name
-  username   = var.db_username
-  password   = var.db_password
+  source         = "../rds"
+  sg_id          = module.security_group.id
+  identifier     = module.naming_conventions.full_name
+  name           = var.db_name
+  username       = var.db_username
+  password       = var.db_password
+  engine_version = var.engine_version
   tags = merge(module.naming_conventions.default_tags, {
     Module = "RDS"
   })
